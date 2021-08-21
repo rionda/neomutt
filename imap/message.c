@@ -1321,6 +1321,7 @@ int imap_read_headers(struct Mailbox *m, unsigned int msn_begin,
   unsigned long long *pmodseq = NULL;
   unsigned long long hc_modseq = 0;
   char *uid_seqset = NULL;
+  unsigned int msn_begin_original = msn_begin;
 #endif /* USE_HCACHE */
 
   struct ImapAccountData *adata = imap_adata_get(m);
@@ -1443,6 +1444,7 @@ retry:
       FREE(&uid_seqset);
       uidvalidity = NULL;
       uid_next = 0;
+      msn_begin = msn_begin_original;
 
       goto retry;
     }
