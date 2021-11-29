@@ -673,7 +673,8 @@ int km_dokey(enum MenuType mtype)
             goto gotkey;
 #endif
 #ifdef USE_IPC
-          if (Socket.msg.ready) {
+          if (Socket.msg.ready)
+          {
             goto gotkey;
           }
 #endif
