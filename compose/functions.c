@@ -418,8 +418,8 @@ static bool edit_address_list(int field, struct AddressList *al)
   mutt_addrlist_write(al, new_list->data, new_list->dsize, false);
   mutt_buffer_fix_dptr(new_list);
   mutt_buffer_copy(old_list, new_list);
-  if (mutt_buffer_get_field(_(Prompts[field]), new_list, MUTT_COMP_ALIAS, false,
-                            NULL, NULL, NULL) == 0)
+  if (mutt_get_field(_(Prompts[field]), new_list, MUTT_COMP_ALIAS, false, NULL,
+                     NULL, NULL) == 0)
   {
     mutt_addrlist_clear(al);
     mutt_addrlist_parse2(al, mutt_buffer_string(new_list));
@@ -839,8 +839,8 @@ static int op_attachment_attach_file(struct ComposeSharedData *shared, int op)
   char **files = NULL;
 
   struct Buffer *fname = mutt_buffer_pool_get();
-  if ((mutt_buffer_enter_fname(prompt, fname, false, NULL, true, &files,
-                               &numfiles, MUTT_SEL_MULTI) == -1) ||
+  if ((mutt_enter_fname(prompt, fname, false, NULL, true, &files, &numfiles,
+                        MUTT_SEL_MULTI) == -1) ||
       mutt_buffer_is_empty(fname))
   {
     for (int i = 0; i < numfiles; i++)
@@ -956,8 +956,8 @@ static int op_attachment_attach_message(struct ComposeSharedData *shared, int op
     }
   }
 
-  if ((mutt_buffer_enter_fname(prompt, fname, true, shared->mailbox, false,
-                               NULL, NULL, MUTT_SEL_NO_FLAGS) == -1) ||
+  if ((mutt_enter_fname(prompt, fname, true, shared->mailbox, false, NULL, NULL,
+                        MUTT_SEL_NO_FLAGS) == -1) ||
       mutt_buffer_is_empty(fname))
   {
     mutt_buffer_pool_release(&fname);
@@ -1183,8 +1183,7 @@ static int op_attachment_edit_description(struct ComposeSharedData *shared, int 
   mutt_buffer_strcpy(buf, cur_att->body->description);
 
   /* header names should not be translated */
-  if (mutt_buffer_get_field("Description: ", buf, MUTT_COMP_NO_FLAGS, false,
-                            NULL, NULL, NULL) == 0)
+  if (mutt_get_field("Description: ", buf, MUTT_COMP_NO_FLAGS, false, NULL, NULL, NULL) == 0)
   {
     if (!mutt_str_equal(cur_att->body->description, mutt_buffer_string(buf)))
     {
@@ -1214,8 +1213,8 @@ static int op_attachment_edit_encoding(struct ComposeSharedData *shared, int op)
       current_attachment(shared->adata->actx, shared->adata->menu);
   mutt_buffer_strcpy(buf, ENCODING(cur_att->body->encoding));
 
-  if ((mutt_buffer_get_field("Content-Transfer-Encoding: ", buf,
-                             MUTT_COMP_NO_FLAGS, false, NULL, NULL, NULL) == 0) &&
+  if ((mutt_get_field("Content-Transfer-Encoding: ", buf, MUTT_COMP_NO_FLAGS,
+                      false, NULL, NULL, NULL) == 0) &&
       !mutt_buffer_is_empty(buf))
   {
     int enc = mutt_check_encoding(mutt_buffer_string(buf));
@@ -1256,8 +1255,8 @@ static int op_attachment_edit_language(struct ComposeSharedData *shared, int op)
       current_attachment(shared->adata->actx, shared->adata->menu);
 
   mutt_buffer_strcpy(buf, cur_att->body->language);
-  if (mutt_buffer_get_field("Content-Language: ", buf, MUTT_COMP_NO_FLAGS,
-                            false, NULL, NULL, NULL) == 0)
+  if (mutt_get_field("Content-Language: ", buf, MUTT_COMP_NO_FLAGS, false, NULL,
+                     NULL, NULL) == 0)
   {
     if (!mutt_str_equal(cur_att->body->language, mutt_buffer_string(buf)))
     {
@@ -1558,8 +1557,7 @@ static int op_attachment_new_mime(struct ComposeSharedData *shared, int op)
   struct Buffer *type = NULL;
   struct AttachPtr *ap = NULL;
 
-  if ((mutt_buffer_get_field(_("New file: "), fname, MUTT_COMP_FILE, false,
-                             NULL, NULL, NULL) != 0) ||
+  if ((mutt_get_field(_("New file: "), fname, MUTT_COMP_FILE, false, NULL, NULL, NULL) != 0) ||
       mutt_buffer_is_empty(fname))
   {
     goto done;
@@ -1568,8 +1566,7 @@ static int op_attachment_new_mime(struct ComposeSharedData *shared, int op)
 
   /* Call to lookup_mime_type () ?  maybe later */
   type = mutt_buffer_pool_get();
-  if ((mutt_buffer_get_field("Content-Type: ", type, MUTT_COMP_NO_FLAGS, false,
-                             NULL, NULL, NULL) != 0) ||
+  if ((mutt_get_field("Content-Type: ", type, MUTT_COMP_NO_FLAGS, false, NULL, NULL, NULL) != 0) ||
       mutt_buffer_is_empty(type))
   {
     goto done;
@@ -1670,8 +1667,8 @@ static int op_attachment_rename_attachment(struct ComposeSharedData *shared, int
     src = cur_att->body->filename;
   struct Buffer *fname = mutt_buffer_pool_get();
   mutt_buffer_strcpy(fname, mutt_path_basename(NONULL(src)));
-  int ret = mutt_buffer_get_field(_("Send attachment with name: "), fname,
-                                  MUTT_COMP_FILE, false, NULL, NULL, NULL);
+  int ret = mutt_get_field(_("Send attachment with name: "), fname,
+                           MUTT_COMP_FILE, false, NULL, NULL, NULL);
   if (ret == 0)
   {
     // It's valid to set an empty string here, to erase what was set
@@ -1907,8 +1904,8 @@ static int op_envelope_edit_fcc(struct ComposeSharedData *shared, int op)
   int rc = IR_NO_ACTION;
   struct Buffer *fname = mutt_buffer_pool_get();
   mutt_buffer_copy(fname, shared->fcc);
-  if (mutt_buffer_get_field(Prompts[HDR_FCC], fname, MUTT_COMP_FILE | MUTT_COMP_CLEAR,
-                            false, NULL, NULL, NULL) == 0)
+  if (mutt_get_field(Prompts[HDR_FCC], fname, MUTT_COMP_FILE | MUTT_COMP_CLEAR,
+                     false, NULL, NULL, NULL) == 0)
   {
     if (!mutt_str_equal(shared->fcc->data, fname->data))
     {
@@ -2007,8 +2004,8 @@ static int op_envelope_edit_subject(struct ComposeSharedData *shared, int op)
   struct Buffer *buf = mutt_buffer_pool_get();
 
   mutt_buffer_strcpy(buf, shared->email->env->subject);
-  if (mutt_buffer_get_field(Prompts[HDR_SUBJECT], buf, MUTT_COMP_NO_FLAGS,
-                            false, NULL, NULL, NULL) == 0)
+  if (mutt_get_field(Prompts[HDR_SUBJECT], buf, MUTT_COMP_NO_FLAGS, false, NULL,
+                     NULL, NULL) == 0)
   {
     if (!mutt_str_equal(shared->email->env->subject, mutt_buffer_string(buf)))
     {
@@ -2179,8 +2176,7 @@ static int op_compose_rename_file(struct ComposeSharedData *shared, int op)
   struct Buffer *fname = mutt_buffer_pool_get();
   mutt_buffer_strcpy(fname, cur_att->body->filename);
   mutt_buffer_pretty_mailbox(fname);
-  if ((mutt_buffer_get_field(_("Rename to: "), fname, MUTT_COMP_FILE, false,
-                             NULL, NULL, NULL) == 0) &&
+  if ((mutt_get_field(_("Rename to: "), fname, MUTT_COMP_FILE, false, NULL, NULL, NULL) == 0) &&
       !mutt_buffer_is_empty(fname))
   {
     struct stat st = { 0 };
@@ -2296,8 +2292,8 @@ static int op_compose_write_message(struct ComposeSharedData *shared, int op)
   }
   if (shared->adata->actx->idxlen)
     shared->email->body = shared->adata->actx->idx[0]->body;
-  if ((mutt_buffer_enter_fname(_("Write message to mailbox"), fname, true,
-                               shared->mailbox, false, NULL, NULL, MUTT_SEL_NO_FLAGS) != -1) &&
+  if ((mutt_enter_fname(_("Write message to mailbox"), fname, true, shared->mailbox,
+                        false, NULL, NULL, MUTT_SEL_NO_FLAGS) != -1) &&
       !mutt_buffer_is_empty(fname))
   {
     mutt_message(_("Writing message to %s ..."), mutt_buffer_string(fname));
@@ -2430,8 +2426,8 @@ static int op_envelope_edit_followup_to(struct ComposeSharedData *shared, int op
   struct Buffer *buf = mutt_buffer_pool_get();
 
   mutt_buffer_strcpy(buf, shared->email->env->followup_to);
-  if (mutt_buffer_get_field(Prompts[HDR_FOLLOWUPTO], buf, MUTT_COMP_NO_FLAGS,
-                            false, NULL, NULL, NULL) == 0)
+  if (mutt_get_field(Prompts[HDR_FOLLOWUPTO], buf, MUTT_COMP_NO_FLAGS, false,
+                     NULL, NULL, NULL) == 0)
   {
     mutt_str_replace(&shared->email->env->followup_to, mutt_buffer_string(buf));
     notify_send(shared->notify, NT_COMPOSE, NT_COMPOSE_ENVELOPE, NULL);
@@ -2454,8 +2450,8 @@ static int op_envelope_edit_newsgroups(struct ComposeSharedData *shared, int op)
   struct Buffer *buf = mutt_buffer_pool_get();
 
   mutt_buffer_strcpy(buf, shared->email->env->newsgroups);
-  if (mutt_buffer_get_field(Prompts[HDR_NEWSGROUPS], buf, MUTT_COMP_NO_FLAGS,
-                            false, NULL, NULL, NULL) == 0)
+  if (mutt_get_field(Prompts[HDR_NEWSGROUPS], buf, MUTT_COMP_NO_FLAGS, false,
+                     NULL, NULL, NULL) == 0)
   {
     mutt_str_replace(&shared->email->env->newsgroups, mutt_buffer_string(buf));
     notify_send(shared->notify, NT_COMPOSE, NT_COMPOSE_ENVELOPE, NULL);
@@ -2479,8 +2475,8 @@ static int op_envelope_edit_x_comment_to(struct ComposeSharedData *shared, int o
   struct Buffer *buf = mutt_buffer_pool_get();
 
   mutt_buffer_strcpy(buf, shared->email->env->x_comment_to);
-  if (mutt_buffer_get_field(Prompts[HDR_XCOMMENTTO], buf, MUTT_COMP_NO_FLAGS,
-                            false, NULL, NULL, NULL) == 0)
+  if (mutt_get_field(Prompts[HDR_XCOMMENTTO], buf, MUTT_COMP_NO_FLAGS, false,
+                     NULL, NULL, NULL) == 0)
   {
     mutt_str_replace(&shared->email->env->x_comment_to, mutt_buffer_string(buf));
     notify_send(shared->notify, NT_COMPOSE, NT_COMPOSE_ENVELOPE, NULL);
