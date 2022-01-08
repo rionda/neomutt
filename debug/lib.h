@@ -53,6 +53,9 @@ struct NotifyCallback;
 // Backtrace
 void show_backtrace(void);
 
+// Compose
+void compose_automate(struct AttachCtx *actx, int *action_num);
+
 // Email
 void        add_flag               (struct Buffer *buf, bool is_set, const char *name);
 void        dump_addr_list         (char *buf, size_t buflen, const struct AddressList *al, const char *name);

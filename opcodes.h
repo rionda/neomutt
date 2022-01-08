@@ -75,6 +75,13 @@
 #define OPS_AUTOCRYPT(_)
 #endif
 
+#ifdef USE_DEBUG_COMPOSE
+#define OPS_DEBUG(_fmt) \
+  _fmt(OP_COMPOSE_AUTOMATE,               "automate the compose dialog")
+#else
+#define OPS_DEBUG(_)
+#endif
+
 #define OPS_CORE(_fmt) \
   _fmt(OP_BOTTOM_PAGE,                        N_("move to the bottom of the page")) \
   _fmt(OP_BOUNCE_MESSAGE,                     N_("remail a message to another user")) \
@@ -342,6 +349,7 @@
   OPS_ATTACHMENT(_fmt) \
   OPS_AUTOCRYPT(_fmt) \
   OPS_CORE(_fmt) \
+  OPS_DEBUG(_fmt) \
   OPS_CRYPT(_fmt) \
   OPS_ENVELOPE(_fmt) \
   OPS_MIX(_fmt) \
