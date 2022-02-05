@@ -818,7 +818,6 @@ static int op_main_change_folder(struct IndexSharedData *shared,
 {
   bool pager_return = true; /* return to display message in pager */
   struct Buffer *folderbuf = mutt_buffer_pool_get();
-  int rc;
   mutt_buffer_alloc(folderbuf, PATH_MAX);
 
   char *cp = NULL;
@@ -879,8 +878,8 @@ folderbuf_ready:
   }
   else
   {
-    rc = change_folder_string(priv->menu, folderbuf->data, folderbuf->dsize,
-                              &priv->oldcount, shared, &pager_return, read_only);
+    change_folder_string(priv->menu, folderbuf->data, folderbuf->dsize,
+                         &priv->oldcount, shared, &pager_return, read_only);
   }
 
 changefoldercleanup:
