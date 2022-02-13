@@ -47,5 +47,6 @@ struct GlobalFunction
 extern struct GlobalFunction GlobalFunctions[];
 
 int global_function_dispatcher(struct MuttWindow *win, int op);
+int window_dispatch_function  (struct MuttWindow *win, int op);
 
 #endif /* MUTT_GLOBAL_FUNCTIONS_H */
