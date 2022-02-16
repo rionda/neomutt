@@ -344,7 +344,6 @@ int mutt_compose_menu(struct Email *e, struct Buffer *fcc, uint8_t flags,
   update_menu(shared->adata->actx, shared->adata->menu, true);
   notify_send(shared->email->notify, NT_EMAIL, NT_EMAIL_CHANGE, NULL);
 
-  struct MuttWindow *win_env = window_find_child(dlg, WT_CUSTOM);
   while (loop)
   {
 #ifdef USE_NNTP
@@ -356,10 +355,10 @@ int mutt_compose_menu(struct Email *e, struct Buffer *fcc, uint8_t flags,
       mutt_debug(LL_DEBUG1, "Got op %s (%d)\n", OpStrings[op][0], op);
 
     int rc = compose_function_dispatcher(dlg, op);
+
     if (rc == IR_UNKNOWN)
-    {
-      rc = env_function_dispatcher(win_env, op);
-    }
+      rc = window_dispatch_function(dlg, op);
+
     if (rc == IR_DONE)
       break;
   }
