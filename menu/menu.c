@@ -52,46 +52,12 @@
 
 int menu_dialog_dokey(struct Menu *menu, int *ip);
 int menu_dialog_translate_op(int i);
+void menu_jump(struct Menu *menu);
 
 char *SearchBuffers[MENU_MAX];
 
 #define MUTT_SEARCH_UP 1
 #define MUTT_SEARCH_DOWN 2
-
-/**
- * menu_jump - Jump to another item in the menu
- * @param menu Current Menu
- *
- * Ask the user for a message number to jump to.
- */
-static void menu_jump(struct Menu *menu)
-{
-  if (menu->max == 0)
-  {
-    mutt_error(_("No entries"));
-    return;
-  }
-
-  mutt_unget_event(LastKey, 0);
-
-  struct Buffer *buf = mutt_buffer_pool_get();
-  if ((mutt_buffer_get_field(_("Jump to: "), buf, MUTT_COMP_NO_FLAGS, false,
-                             NULL, NULL, NULL) == 0) &&
-      !mutt_buffer_is_empty(buf))
-  {
-    int n = 0;
-    if (mutt_str_atoi_full(mutt_buffer_string(buf), &n) && (n > 0) && (n < (menu->max + 1)))
-    {
-      menu_set_index(menu, n - 1); // msg numbers are 0-based
-    }
-    else
-    {
-      mutt_error(_("Invalid index number"));
-    }
-  }
-
-  mutt_buffer_pool_release(&buf);
-}
 
 /**
  * default_color - Get the default colour for a line of the menu - Implements Menu::color() - @ingroup menu_color
