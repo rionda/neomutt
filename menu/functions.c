@@ -48,7 +48,7 @@ extern char *SearchBuffers[];
  * @retval  0 An event occurred for the menu, or a timeout
  * @retval -1 There was an event, but not for menu
  */
-int menu_dialog_dokey(struct Menu *menu, int *ip)
+static int menu_dialog_dokey(struct Menu *menu, int *ip)
 {
   struct KeyEvent ch = { OP_NULL, OP_NULL };
   char *p = NULL;
@@ -86,7 +86,7 @@ int menu_dialog_dokey(struct Menu *menu, int *ip)
  * @param i Action requested, e.g. OP_NEXT_ENTRY
  * @retval num Action to perform, e.g. OP_NEXT_LINE
  */
-int menu_dialog_translate_op(int i)
+static int menu_dialog_translate_op(int i)
 {
   switch (i)
   {
@@ -114,7 +114,7 @@ int menu_dialog_translate_op(int i)
  * @retval >=0 Index of matching item
  * @retval -1  Search failed, or was cancelled
  */
-int search(struct Menu *menu, int op)
+static int search(struct Menu *menu, int op)
 {
   int rc = -1;
   int wrap = 0;
@@ -198,7 +198,7 @@ done:
  *
  * Ask the user for a message number to jump to.
  */
-void menu_jump(struct Menu *menu)
+static void menu_jump(struct Menu *menu)
 {
   if (menu->max == 0)
   {
