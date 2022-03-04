@@ -538,7 +538,7 @@ int menu_redraw(struct Menu *menu)
   {
     menu_redraw_full(menu);
     /* allow the caller to do any local configuration */
-    return OP_REDRAW;
+    // return OP_REDRAW;
   }
 
   if (menu->redraw & MENU_REDRAW_INDEX)

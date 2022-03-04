@@ -34,6 +34,7 @@
 #include "mutt_window.h"
 #include "curs_lib.h"
 #include "mutt_curses.h"
+#include "mutt_globals.h"
 #include "options.h"
 #include "reflow.h"
 #include "rootwin.h"
@@ -605,11 +606,25 @@ void window_redraw(struct MuttWindow *win)
   if (!win)
     win = RootWindow;
 
+  // #ifdef QWQ
+  if (SigWinch)
+  {
+    SigWinch = false;
+    window_invalidate_all();
+    mutt_resize_screen();
+  }
+  // #endif
+
   window_reflow(win);
   window_notify_all(win);
 
   window_recalc(win);
   window_repaint(win);
+  //QWQ window_repaint(window_get_focus());
+  // as a hint to set the cursor position
+  //QWQ after all refreshes/redraws, the focussed window MUST be allowed to position the cursor
+  // can window_redraw() remember and restore it?  it knows which is focussed
+  // but it's recursive; top might not know
   mutt_refresh();
 }
 

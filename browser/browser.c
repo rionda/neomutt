@@ -2233,6 +2233,13 @@ void mutt_buffer_select_file(struct Buffer *file, SelectFileFlags flags,
           imap_subscribe(tmp2, (op == OP_BROWSER_SUBSCRIBE));
         }
 #endif /* USE_IMAP */
+        break;
+      }
+
+      default:
+      {
+        menu_function_dispatcher(win_menu, op);
+        break;
       }
     }
   }
