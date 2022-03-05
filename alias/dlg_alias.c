@@ -327,6 +327,8 @@ static void dlg_select_alias(struct Buffer *buf, struct AliasMenuData *mdata)
     avp->num = ARRAY_FOREACH_IDX;
   }
 
+  // ---------------------------------------------------------------------------
+  // Event Loop
   int rc = 0;
   int op = OP_NULL;
   do
@@ -352,6 +354,7 @@ static void dlg_select_alias(struct Buffer *buf, struct AliasMenuData *mdata)
       rc = global_function_dispatcher(win_menu, op);
   }
   while ((rc != IR_DONE) && (rc != IR_CONTINUE));
+  // ---------------------------------------------------------------------------
 
   if (buf && (rc == IR_CONTINUE))
   {
