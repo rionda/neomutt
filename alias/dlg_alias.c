@@ -314,7 +314,6 @@ static void dlg_select_alias(struct Buffer *buf, struct AliasMenuData *mdata)
   struct MuttWindow *dlg = alias_dialog_new(mdata);
   struct Menu *menu = dlg->wdata;
   struct MuttWindow *win_sbar = window_find_child(dlg, WT_STATUS_BAR);
-  struct MuttWindow *win_menu = window_find_child(dlg, WT_MENU);
   mdata->menu = menu;
   mdata->sbar = win_sbar;
   mdata->query = buf;
@@ -349,9 +348,9 @@ static void dlg_select_alias(struct Buffer *buf, struct AliasMenuData *mdata)
 
     rc = alias_function_dispatcher(dlg, op);
     if (rc == IR_UNKNOWN)
-      rc = menu_function_dispatcher(win_menu, op);
+      rc = menu_function_dispatcher(menu->win, op);
     if (rc == IR_UNKNOWN)
-      rc = global_function_dispatcher(win_menu, op);
+      rc = global_function_dispatcher(menu->win, op);
   }
   while ((rc != IR_DONE) && (rc != IR_CONTINUE));
   // ---------------------------------------------------------------------------

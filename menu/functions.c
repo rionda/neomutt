@@ -42,72 +42,6 @@ extern char *SearchBuffers[];
 #define MUTT_SEARCH_DOWN 2
 
 /**
- * menu_dialog_dokey - Check if there are any menu key events to process
- * @param menu Current Menu
- * @param ip   KeyEvent ID
- * @retval  0 An event occurred for the menu, or a timeout
- * @retval -1 There was an event, but not for menu
- */
-static int menu_dialog_dokey(struct Menu *menu, int *ip)
-{
-  struct KeyEvent ch = { OP_NULL, OP_NULL };
-  char *p = NULL;
-
-  enum MuttCursorState cursor = mutt_curses_set_cursor(MUTT_CURSOR_VISIBLE);
-  do
-  {
-    ch = mutt_getch();
-  } while (ch.ch == OP_TIMEOUT);
-  mutt_curses_set_cursor(cursor);
-
-  if (ch.ch < 0)
-  {
-    *ip = -1;
-    return 0;
-  }
-
-  if ((ch.ch != 0) && (p = strchr(menu->keys, ch.ch)))
-  {
-    *ip = OP_MAX + (p - menu->keys + 1);
-    return 0;
-  }
-  else
-  {
-    if (ch.op == OP_NULL)
-      mutt_unget_event(ch.ch, OP_NULL);
-    else
-      mutt_unget_event(0, ch.op);
-    return -1;
-  }
-}
-
-/**
- * menu_dialog_translate_op - Convert menubar movement to scrolling
- * @param i Action requested, e.g. OP_NEXT_ENTRY
- * @retval num Action to perform, e.g. OP_NEXT_LINE
- */
-static int menu_dialog_translate_op(int i)
-{
-  switch (i)
-  {
-    case OP_NEXT_ENTRY:
-      return OP_NEXT_LINE;
-    case OP_PREV_ENTRY:
-      return OP_PREV_LINE;
-    case OP_CURRENT_TOP:
-    case OP_FIRST_ENTRY:
-      return OP_TOP_PAGE;
-    case OP_CURRENT_BOTTOM:
-    case OP_LAST_ENTRY:
-      return OP_BOTTOM_PAGE;
-    case OP_CURRENT_MIDDLE:
-      return OP_MIDDLE_PAGE;
-  }
-
-  return i;
-}
-
-/**
  * search - Search a menu
  * @param menu Menu to search
  * @param op   Search operation, e.g. OP_SEARCH_NEXT
@@ -391,14 +325,6 @@ int menu_function_dispatcher(struct MuttWindow *win, int op)
     return IR_UNKNOWN;
 
   struct Menu *menu = win->wdata;
-
-  // Try to catch dialog keys before ops
-  if (!ARRAY_EMPTY(&menu->dialog) && (menu_dialog_dokey(menu, &op) == 0))
-    return op;
-
-  // Convert menubar movement to scrolling
-  if (!ARRAY_EMPTY(&menu->dialog))
-    op = menu_dialog_translate_op(op);
 
   int rc = IR_UNKNOWN;
   for (size_t i = 0; MenuFunctions[i].op != OP_NULL; i++)

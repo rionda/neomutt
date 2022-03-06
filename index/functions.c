@@ -89,6 +89,8 @@
 static const char *Not_available_in_this_menu =
     N_("Not available in this menu");
 
+int dlg_verify_certificate(const char *title, struct ListHead *list, bool allow_always, bool allow_skip);
+
 /// Lookup for function results
 const struct Mapping RetvalNames[] = {
   // clang-format off
@@ -1964,21 +1966,20 @@ static int op_prev_entry(struct IndexSharedData *shared, struct IndexPrivateData
  */
 static int op_print(struct IndexSharedData *shared, struct IndexPrivateData *priv, int op)
 {
-  struct EmailList el = STAILQ_HEAD_INITIALIZER(el);
-  el_add_tagged(&el, shared->ctx, shared->email, priv->tag);
-  mutt_print_message(shared->mailbox, &el);
-  emaillist_clear(&el);
+  struct ListHead list = STAILQ_HEAD_INITIALIZER(list);
 
-#ifdef USE_IMAP
-  /* in an IMAP folder index with imap_peek=no, printing could change
-   * new or old messages status to read. Redraw what's needed.  */
-  const bool c_imap_peek = cs_subset_bool(shared->sub, "imap_peek");
-  if ((shared->mailbox->type == MUTT_IMAP) && !c_imap_peek)
+  struct Buffer *buf = mutt_buffer_pool_get();
+
+  for (int i = 0; i < 250; i++)
   {
-    menu_queue_redraw(priv->menu, (priv->tag ? MENU_REDRAW_INDEX : MENU_REDRAW_CURRENT));
+    mutt_buffer_printf(buf, "This is number %d", i);
+    mutt_list_insert_tail(&list, mutt_buffer_strdup(buf));
   }
-#endif
 
+  dlg_verify_certificate("title", &list, true, true);
+
+  mutt_list_free(&list);
+  mutt_buffer_pool_release(&buf);
   return IR_SUCCESS;
 }
 
